@@ -1,1 +1,9 @@
 myvenv/Scripts/activate
+python managy.py runserver 0.0.0.0:9090
+
+설치할 패키지
+django
+requests
+bs4
+pandas
+lxml
