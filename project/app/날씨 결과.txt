@@ -1,0 +1,14 @@
+{'weather': 
+	{'hourly': 
+		[{
+		'grid': {'latitude': '35.94074', 'longitude': '128.55318', 'city': '措备', 'county': '合备', 'village': '谰郴悼'}, 
+		'sky': {'code': 'SKY_O07', 'name': '儒覆'}, 
+		'temperature': {'tc': '19.30', 'tmax': '22.00', 'tmin': '19.00'}, 
+		'humidity': '82.00', 
+		'lightning': '0', 
+		'wind': {'wdir': '120.00', 'wspd': '1.60'}, 
+		'precipitation': {'sinceOntime': '0.00', 'type': '0'}, 
+		'timeRelease': '2018-07-09 22:00:00'}]
+	}, 
+		'common': {'alertYn': 'Y', 'stormYn': 'N'}, 
+		'result': {'code': 9200, 'requestUrl': '/weather/current/hourly?version=1&city=措备&county=合备&village=怕傈悼', 'message': '己傍'}}
