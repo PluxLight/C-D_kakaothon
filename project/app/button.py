@@ -23,7 +23,7 @@ def button_check(button):
     elif button == '처음으로':
         return '처음으로'
     elif button == '별점 확인&주기':
-        return '별점'
+        return '미구현'
     else:
         return '미구현'
 
