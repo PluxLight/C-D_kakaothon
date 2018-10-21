@@ -44,7 +44,7 @@ def cheaum():#채움관 당일 정보
 
     return data
 
-def cheaumi_tomorrow(): #채움관 익일 정보
+def cheaum_tomorrow(): #채움관 익일 정보
     now = dt.datetime.now()
     tomorrow = now + dt.timedelta(days=1)
     nowDate = str(now.strftime('%a'))
