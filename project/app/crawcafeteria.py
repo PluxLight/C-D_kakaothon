@@ -3,6 +3,194 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import datetime as dt
 
+
+
+def domitori(): #기숙사 당일 정보
+    now = dt.datetime.now()
+    nowDate = str(now.strftime('%a'))
+
+    f = open("C:\project/Domitori_DB/" + nowDate + ".txt", 'r')
+    data = f.read()
+    f.close()
+
+    return data
+
+def domitori_tomorrow(): #기숙사 익일 정보
+    now = dt.datetime.now()
+    tomorrow = now + dt.timedelta(days=1)
+    nowDate = str(now.strftime('%a'))
+    toDate = str(tomorrow.strftime('%a'))
+
+    if nowDate == 'Sun': #오늘이 일요일인 경우
+        f = open("C:\project/Domitori_DB/nextMon.txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+    else: #이외의 날짜인 경우
+        f = open("C:\project/Domitori_DB/" + toDate + ".txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+
+def cheaum():#채움관 당일 정보
+    now = dt.datetime.now()
+    nowDate = str(now.strftime('%a'))
+
+    f = open("C:\project/Cheaum_DB/" + nowDate + ".txt", 'r')
+    data = f.read()
+    f.close()
+
+    return data
+
+def cheaum_tomorrow(): #채움관 익일 정보
+    now = dt.datetime.now()
+    tomorrow = now + dt.timedelta(days=1)
+    nowDate = str(now.strftime('%a'))
+    toDate = str(tomorrow.strftime('%a'))
+
+    if nowDate == 'Sun': #오늘이 일요일인 경우
+        f = open("C:\project/Cheaum_DB/nextMon.txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+    else: #이외의 날짜인 경우
+        f = open("C:\project/Cheaum_DB/" + toDate + ".txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+
+def erum():#이움관 당일 정보
+    now = dt.datetime.now()
+    nowDate = str(now.strftime('%a'))
+
+    f = open("C:\project/Erum_DB/" + nowDate + ".txt", 'r')
+    data = f.read()
+    f.close()
+
+    return data
+
+def erum_tomorrow(): #이움관 익일 정보
+    now = dt.datetime.now()
+    tomorrow = now + dt.timedelta(days=1)
+    nowDate = str(now.strftime('%a'))
+    toDate = str(tomorrow.strftime('%a'))
+
+    if nowDate == 'Sun': #오늘이 일요일인 경우
+        f = open("C:\project/Erum_DB/nextMon.txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+    else: #이외의 날짜인 경우
+        f = open("C:\project/Erum_DB/" + toDate + ".txt", 'r')
+        data = f.read()
+        f.close()
+
+        return data
+
+
+def restaurant():
+    rest_data = "운영시간 10:00 ~ 19:00\n(주말, 공휴일 제외)\n\n김밥: 1500원\n참치김밥: 1500원\n우동: 2500원\n참치마요: 3500원\n등심돈가스: 3800원\n치킨까스: 3800원\n치즈돈가스: 4000원\n불닭덮밥: 3800원\n\
+스팸덮밥: 3800원\n샐러드파스타: 3800원\n돼지불고기: 4000원\n소고기불고기: 4500원\n오리불고기: 5000원\n\n"
+
+    return rest_data
+
+#이룸관 구버전
+"""
+def erum():
+    url = 'http://www.andong.ac.kr/index.sko?menuCd=AA06003005001&strDate='
+
+    now = dt.datetime.now()
+    nowDate = str(now.strftime('%Y-%m-%d'))
+    tomorrow = now + dt.timedelta(days=1)
+    toDate = str(tomorrow.strftime('%Y-%m-%d'))
+    url = url + nowDate
+
+    req = requests.get(url)
+    html = req.text
+    soup = BeautifulSoup(html, 'lxml')
+    check_ahrum = str(soup.find('table'))
+
+    if '정보가 없습니다' in check_ahrum:
+        text = '운영하지 않는 날입니다\n토, 일, 공휴일은 운영 안함'
+        return text
+    elif '방학 중' in check_ahrum:
+        text = '방학 중\n채움관만 운영'
+        return text
+    else:
+        table_data = soup.find('table').find_all('td')
+        cafe_table = str(table_data).split('</td>')
+        breakfast = cafe_table[0][17:-5]
+        l = cafe_table[1][18:-5]
+        d = cafe_table[2][18:-5]
+        lun = l.split('<br/>')
+        lunch = ''
+        for i in lun:
+            lunch = lunch + i + '\n'
+
+        din = d.split('<br/>')
+        dinner = ''
+        for i in din:
+            dinner = dinner + i + '\n'
+
+        meal = '<----------조식---------->\n' + breakfast + \
+               '\n\n<----------중식---------->\n' + lunch + \
+               '\n<----------석식---------->\n' + dinner
+
+        meal = meal.replace('amp;', '', 5)
+
+        return meal
+
+def erum_tomorrow():
+    url = 'http://www.andong.ac.kr/index.sko?menuCd=AA06003005001&strDate='
+
+    now = dt.datetime.now()
+    tomorrow = now + dt.timedelta(days=1)
+    toDate = str(tomorrow.strftime('%Y-%m-%d'))
+    url = url + toDate
+
+    req = requests.get(url)
+    html = req.text
+    soup = BeautifulSoup(html, 'lxml')
+    check_ahrum = str(soup.find('table'))
+
+    if '정보가 없습니다' in check_ahrum:
+        text = '운영하지 않는 날입니다\n토, 일, 공휴일은 운영 안함'
+        return text
+    elif '방학 중' in check_ahrum:
+        text = '방학 중\n채움관만 운영'
+        return text
+    else:
+        table_data = soup.find('table').find_all('td')
+        cafe_table = str(table_data).split('</td>')
+        breakfast = cafe_table[0][17:-5]
+        l = cafe_table[1][18:-5]
+        d = cafe_table[2][18:-5]
+        lun = l.split('<br/>')
+        lunch = ''
+        for i in lun:
+            lunch = lunch + i + '\n'
+
+        din = d.split('<br/>')
+        dinner = ''
+        for i in din:
+            dinner = dinner + i + '\n'
+
+        meal = '<----------조식---------->\n' + breakfast + \
+               '\n\n<----------중식---------->\n' + lunch + \
+               '\n<----------석식---------->\n' + dinner
+
+        meal = meal.replace('amp;', '', 5)
+
+        return meal
+"""
+
+#채움관 구버전
+"""
 def cheaum():
     url = 'http://www.andong.ac.kr/index.sko?menuCd=AA06003005000&strDate='
 
@@ -81,6 +269,8 @@ def cheaum_tomorrow():
         meal = meal.replace('amp;', '', 5)
 
         return meal
+"""
+
 
 """
 def domitori():
@@ -245,127 +435,3 @@ def domitori_tomorrow():
 
 """
 #이전방식
-
-def domitori(): #당일 정보
-    now = dt.datetime.now()
-    nowDate = str(now.strftime('%a'))
-
-    f = open("C:\project/Domitori_DB/" + nowDate + ".txt", 'r')
-    data = f.read()
-    f.close()
-
-    return data
-
-def domitori_tomorrow():
-    now = dt.datetime.now()
-    tomorrow = now + dt.timedelta(days=1)
-    nowDate = str(now.strftime('%a'))
-    toDate = str(tomorrow.strftime('%a'))
-
-    if nowDate == 'Sun': #오늘이 일요일인 경우
-        f = open("C:\project/Domitori_DB/nextMon.txt", 'r')
-        data = f.read()
-        f.close()
-
-        return data
-    else: #이외의 날짜인 경우
-        f = open("C:\project/Domitori_DB/" + toDate + ".txt", 'r')
-        data = f.read()
-        f.close()
-
-        return data
-
-
-
-def erum():
-    url = 'http://www.andong.ac.kr/index.sko?menuCd=AA06003005001&strDate='
-
-    now = dt.datetime.now()
-    nowDate = str(now.strftime('%Y-%m-%d'))
-    tomorrow = now + dt.timedelta(days=1)
-    toDate = str(tomorrow.strftime('%Y-%m-%d'))
-    url = url + nowDate
-
-    req = requests.get(url)
-    html = req.text
-    soup = BeautifulSoup(html, 'lxml')
-    check_ahrum = str(soup.find('table'))
-
-    if '정보가 없습니다' in check_ahrum:
-        text = '운영하지 않는 날입니다\n토, 일, 공휴일은 운영 안함'
-        return text
-    elif '방학 중' in check_ahrum:
-        text = '방학 중\n채움관만 운영'
-        return text
-    else:
-        table_data = soup.find('table').find_all('td')
-        cafe_table = str(table_data).split('</td>')
-        breakfast = cafe_table[0][17:-5]
-        l = cafe_table[1][18:-5]
-        d = cafe_table[2][18:-5]
-        lun = l.split('<br/>')
-        lunch = ''
-        for i in lun:
-            lunch = lunch + i + '\n'
-
-        din = d.split('<br/>')
-        dinner = ''
-        for i in din:
-            dinner = dinner + i + '\n'
-
-        meal = '<----------조식---------->\n' + breakfast + \
-               '\n\n<----------중식---------->\n' + lunch + \
-               '\n<----------석식---------->\n' + dinner
-
-        meal = meal.replace('amp;', '', 5)
-
-        return meal
-
-def erum_tomorrow():
-    url = 'http://www.andong.ac.kr/index.sko?menuCd=AA06003005001&strDate='
-
-    now = dt.datetime.now()
-    tomorrow = now + dt.timedelta(days=1)
-    toDate = str(tomorrow.strftime('%Y-%m-%d'))
-    url = url + toDate
-
-    req = requests.get(url)
-    html = req.text
-    soup = BeautifulSoup(html, 'lxml')
-    check_ahrum = str(soup.find('table'))
-
-    if '정보가 없습니다' in check_ahrum:
-        text = '운영하지 않는 날입니다\n토, 일, 공휴일은 운영 안함'
-        return text
-    elif '방학 중' in check_ahrum:
-        text = '방학 중\n채움관만 운영'
-        return text
-    else:
-        table_data = soup.find('table').find_all('td')
-        cafe_table = str(table_data).split('</td>')
-        breakfast = cafe_table[0][17:-5]
-        l = cafe_table[1][18:-5]
-        d = cafe_table[2][18:-5]
-        lun = l.split('<br/>')
-        lunch = ''
-        for i in lun:
-            lunch = lunch + i + '\n'
-
-        din = d.split('<br/>')
-        dinner = ''
-        for i in din:
-            dinner = dinner + i + '\n'
-
-        meal = '<----------조식---------->\n' + breakfast + \
-               '\n\n<----------중식---------->\n' + lunch + \
-               '\n<----------석식---------->\n' + dinner
-
-        meal = meal.replace('amp;', '', 5)
-
-        return meal
-
-def restaurant():
-    rest_data = "운영시간 10:00 ~ 19:00\n(주말, 공휴일 제외)\n\n김밥: 1500원\n참치김밥: 1500원\n우동: 2500원\n참치마요: 3500원\n등심돈가스: 3800원\n치킨까스: 3800원\n치즈돈가스: 4000원\n불닭덮밥: 3800원\n\
-스팸덮밥: 3800원\n샐러드파스타: 3800원\n돼지불고기: 4000원\n소고기불고기: 4500원\n오리불고기: 5000원\n\n"
-
-    return rest_data
