@@ -36,7 +36,7 @@ def message(request):
 
     #input_text = button.button_check(content_name)
 
-    throw_message = button.message_make(content_name, pre_input_text, pre_pre_input_text)
+    throw_message = button.message_make(content_name, pre_input_text, pre_pre_input_text, user_name)
 
     return throw_message.return_message()
 
