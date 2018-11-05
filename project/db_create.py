@@ -12,10 +12,15 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
     cafe_table = pd.read_html(url)[0]
     cafe_table = cafe_table.fillna('없음')
 
+    day_of_week = dt.datetime.today().weekday()
     now = dt.datetime.now()
-    nowDate = str(now.strftime('%Y-%m-%d'))
+    standard_day = now - dt.timedelta(days=day_of_week)
 
     for i_f in range(3, 10):
+        now = standard_day
+        exact_day = now + dt.timedelta(days=i_f-3)
+        nowDate = str(exact_day.strftime('%Y-%m-%d'))
+
         breakfast = cafe_table[1][i_f]
         lunch = cafe_table[2][i_f]
         dinner = cafe_table[3][i_f]
@@ -62,11 +67,11 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
 
 def nw_domitori_create(): #다음주 월요일 기숙사 식단 DB생성
 
-    now = dt.datetime.now()
-    tomorrow = now + dt.timedelta(days=7)
-    day_of_week = dt.datetime.today().weekday()
-    tomorrow = tomorrow - dt.timedelta(days=day_of_week)
-    toDate = str(tomorrow.strftime('%Y-%m-%d'))
+    now = dt.datetime.now() #오늘 날짜
+    tomorrow = now + dt.timedelta(days=7) #오늘 기준으로 +7일
+    day_of_week = dt.datetime.today().weekday() #오늘 날짜의 요일을 숫자로 변환 (0:월, 1:화, 2:수, 3:목, 4:금, 5:토, 6:일)
+    tomorrow = tomorrow - dt.timedelta(days=day_of_week) #오늘 기준으로 다음주에서 오늘의 요일 값만큼 빼서 다음주 월요일이 도출
+    toDate = str(tomorrow.strftime('%Y-%m-%d')) #도출된 값을 지정된 형식으로 문자열 포맷
 
     nowYearDate = str(now.strftime('%Y'))
     nowMonthDate = str(now.strftime('%m'))
