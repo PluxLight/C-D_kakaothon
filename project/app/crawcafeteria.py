@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime as dt
+from app import db_control
 
 
 
@@ -12,6 +13,13 @@ def domitori(): #기숙사 당일 정보
     f = open("C:\project/Domitori_DB/" + nowDate + ".txt", 'r')
     data = f.read()
     f.close()
+
+    data = data + '\n조식 ' + str(db_control.trans_star('조식', '기숙사')) + ' ' + str(db_control.count_star('조식', '기숙사')) + '명이 참여\n중식 ' + \
+           str(db_control.trans_star('중식', '기숙사')) + ' ' + str(db_control.count_star('중식', '기숙사')) + '명이 참여\n석식 ' + \
+           str(db_control.trans_star('석식', '기숙사')) + ' ' + str(db_control.count_star('석식', '기숙사')) + '명이 참여\n'
+
+    data = str(data)
+
 
     return data
 
@@ -38,9 +46,18 @@ def cheaum():#채움관 당일 정보
     now = dt.datetime.now()
     nowDate = str(now.strftime('%a'))
 
-    f = open("C:\project/Cheaum_DB/" + nowDate + ".txt", 'r')
-    data = f.read()
-    f.close()
+    day_of_week = dt.datetime.today().weekday() #토요일 5 일요일 6
+
+    if day_of_week == 5 or day_of_week == 6:
+        f = open("C:\project/Cheaum_DB/" + nowDate + ".txt", 'r')
+        data = f.read()
+        f.close()
+    else:
+        f = open("C:\project/Cheaum_DB/" + nowDate + ".txt", 'r')
+        data = f.read()
+        data = data + '\n중식 ' + str(db_control.trans_star('중식', '채움관&이룸관')) + ' ' + str(db_control.count_star('중식', '채움관&이룸관')) + '명이 참여\n석식 ' + \
+           str(db_control.trans_star('석식', '채움관&이룸관')) + ' ' + str(db_control.count_star('석식', '채움관&이룸관')) + '명이 참여\n'
+        f.close()
 
     return data
 
@@ -67,9 +84,18 @@ def erum():#이움관 당일 정보
     now = dt.datetime.now()
     nowDate = str(now.strftime('%a'))
 
-    f = open("C:\project/Erum_DB/" + nowDate + ".txt", 'r')
-    data = f.read()
-    f.close()
+    day_of_week = dt.datetime.today().weekday() #토요일 5 일요일 6
+
+    if day_of_week == 5 or day_of_week == 6:
+        f = open("C:\project/Erum_DB/" + nowDate + ".txt", 'r')
+        data = f.read()
+        f.close()
+    else:
+        f = open("C:\project/Erum_DB/" + nowDate + ".txt", 'r')
+        data = f.read()
+        data = data + '\n중식 ' + str(db_control.trans_star('중식', '채움관&이룸관')) + ' ' + str(db_control.count_star('중식', '채움관&이룸관')) + '명이 참여\n석식 ' + \
+           str(db_control.trans_star('석식', '채움관&이룸관')) + ' ' + str(db_control.count_star('석식', '채움관&이룸관')) + '명이 참여\n'
+        f.close()
 
     return data
 
