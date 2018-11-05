@@ -6,10 +6,11 @@ from django.http import JsonResponse
 
 class message_make:
 
-    def __init__(self, cur_text, pre_text, pre_pre_text):
+    def __init__(self, cur_text, pre_text, pre_pre_text, user_key):
         self.cur_text = cur_text
         self.pre_text = pre_text
         self.pre_pre_text = pre_pre_text
+        self.user_key = user_key
 
     def button_check(self):
         if self.cur_text == '채움관':
@@ -99,29 +100,43 @@ class message_make:
             )
         elif self.cur_text == '★★★★★' or self.cur_text == "★★★★☆" or self.cur_text == '★★★☆☆' or \
                 self.cur_text == '★★☆☆☆' or self.cur_text == '★☆☆☆☆':
-            star = 0
-            if self.cur_text == '★★★★★':
-                star = 5
-            elif self.cur_text == '★★★★☆':
-                star = 4
-            elif self.cur_text == '★★★☆☆':
-                star = 3
-            elif self.cur_text == '★★☆☆☆':
-                star = 2
-            elif self.cur_text == '★☆☆☆☆':
-                star = 1
-            db_control.star_point(star, self.pre_text, self.pre_pre_text)
-            message_val = JsonResponse(
-                {
-                    'message': {
-                        'text': '별점이 등록되었습니다'
-                    },
-                    "keyboard": {
-                        "type": "buttons",
-                        "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+            if db_control.overlap_check(self.user_key, self.pre_text, self.pre_pre_text) == 0: #해당 항목에 투표를 한번도 안했을경우
+                if self.cur_text == '★★★★★':
+                    star = 5
+                elif self.cur_text == '★★★★☆':
+                    star = 4
+                elif self.cur_text == '★★★☆☆':
+                    star = 3
+                elif self.cur_text == '★★☆☆☆':
+                    star = 2
+                elif self.cur_text == '★☆☆☆☆':
+                    star = 1
+                db_control.star_point(star, self.pre_text, self.pre_pre_text)
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '별점이 등록되었습니다'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                        }
                     }
-                }
-            )
+                )
+            else:
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '별점의 중복 투표는 제한되어 있습니다.'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                        }
+                    }
+                )
+
+
         elif self.cur_text == '처음으로':
             message_val = JsonResponse(
             {
