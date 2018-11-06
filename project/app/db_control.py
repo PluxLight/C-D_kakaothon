@@ -255,13 +255,11 @@ def overlap_check(u_key, pre_text,pre_pre_text):
 
     cur = conn.cursor()
     sql_str = "select overlap_check from star_overlap where userkey='" + u_key + "' and position='" + position +"';"
-    print(sql_str)
 
     cur.execute(sql_str)
     check_int = cur.fetchall()
     try:
         check_int = int(check_int[0][0])
-        print(check_int)
     except:
         check_int = 0
 
