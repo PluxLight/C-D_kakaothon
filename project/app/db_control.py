@@ -277,6 +277,31 @@ def overlap_check(u_key, pre_text,pre_pre_text):
     else: #투표 당일날 해당 항목에 투표한 경우
         return 1
 
+def moms_db(moms_type):
+    try:
+        conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
+    except:
+        print("moms_db Error")
+        return 0
+
+    cur = conn.cursor()
+
+    str_sql = "select * from moms where note='%s';"%moms_type
+
+    cur.execute(str_sql)
+
+
+
+    results = cur.fetchall()
+
+    moms_data = ''
+
+    for result in results:
+        moms_data += str(result[0]) + ' ' + str(result[1]) + '\n'
+
+    return moms_data
+
+
 
 if __name__ == "__main__":
     star_reset()
