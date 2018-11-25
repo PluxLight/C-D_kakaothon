@@ -222,9 +222,10 @@ def star_reset(): #윈도우 스케줄러에 등록해서 매 정각마다 별�
     cur.execute(update_str)
     conn.commit()
 
-    update_str = "update star_overlap set overlap_check=0;"
+    #update_str = "update star_overlap set overlap_check=0;"
+    del_str = "delete from star_overlap;"
 
-    cur.execute(update_str)
+    cur.execute(del_str)
     conn.commit()
 
     cur.close()
@@ -259,7 +260,6 @@ def overlap_check(u_key, pre_text,pre_pre_text):
     check_int = cur.fetchall()
     try:
         check_int = int(check_int[0][0])
-        print(check_int)
     except:
         check_int = 0
 
