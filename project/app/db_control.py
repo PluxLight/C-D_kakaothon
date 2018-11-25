@@ -222,10 +222,9 @@ def star_reset(): #윈도우 스케줄러에 등록해서 매 정각마다 별�
     cur.execute(update_str)
     conn.commit()
 
-    #update_str = "update star_overlap set overlap_check=0;"
-    del_str = "delete from star_overlap;"
+    update_str = "update star_overlap set overlap_check=0;"
 
-    cur.execute(del_str)
+    cur.execute(update_str)
     conn.commit()
 
     cur.close()
@@ -260,6 +259,7 @@ def overlap_check(u_key, pre_text,pre_pre_text):
     check_int = cur.fetchall()
     try:
         check_int = int(check_int[0][0])
+        print(check_int)
     except:
         check_int = 0
 
@@ -296,8 +296,14 @@ def moms_db(moms_type):
 
     moms_data = ''
 
-    for result in results:
-        moms_data += str(result[0]) + ' ' + str(result[1]) + '\n'
+    if moms_type == '버거':
+        moms_data = '메뉴 / 단품가격 / 세트가격\n'
+        for result in results:
+            moms_data += str(result[0]) + ' / ' + str(result[1]) + ' / ' + str(result[2]) + '\n'
+    else:
+        moms_data = '메뉴 / 가격\n'
+        for result in results:
+            moms_data += str(result[0]) + ' ' + str(result[1]) + '\n'
 
     return moms_data
 
