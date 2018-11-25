@@ -7,3 +7,6 @@ requests
 bs4
 pandas
 lxml
+
+setting.py 에서
+allow_host ['*']해줘야함
