@@ -5,13 +5,15 @@ conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=
 
 cur = conn.cursor()
 
-df = pd.read_excel("moms.xlsx", sheet_name='Sheet1')
+df = pd.read_excel("moms.xlsx", sheet_name='Sheet2')
 
 #print(df['메뉴'])
 
 menu_list = df['메뉴']
 
-price_list = df['가격']
+price_list_1 = df['가격(단품)']
+
+price_list_2 = df['가격(세트)']
 
 note_list = df['비고']
 
@@ -22,7 +24,7 @@ print(df_len)
 
 
 for i in range(df_len):
-    sql_str = "insert into moms values ('%s', %d, '%s')" %(menu_list[i], price_list[i], note_list[i])
+    sql_str = "insert into moms values ('%s', %d, %d, '%s')" %(menu_list[i], price_list_1[i], price_list_2[i], note_list[i])
     #print(sql_str)
     cur.execute(sql_str)
     conn.commit()
