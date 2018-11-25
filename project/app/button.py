@@ -12,6 +12,28 @@ class message_make:
         self.pre_text = pre_text
         self.pre_pre_text = pre_pre_text
         self.user_key = user_key
+        self.no_star = JsonResponse(
+                    {
+                        'message': {
+                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
+                        }
+                    }
+                )
+        self.yes_star = JsonResponse(
+                    {
+                        'message': {
+                            'text': '별점을 선택하세요'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": ["★★★★★", "★★★★☆", "★★★☆☆", "★★☆☆☆", "★☆☆☆☆", "처음으로"]
+                        }
+                    }
+                )
 
     def button_check(self):
         if self.cur_text == '채움관':
@@ -28,6 +50,12 @@ class message_make:
             return crawcafeteria.domitori_tomorrow()
         elif self.cur_text == '양식당':
             return crawcafeteria.restaurant()
+        elif self.cur_text == '맘스터치(버거)':
+            return crawcafeteria.moms('버거')
+        elif self.cur_text == '맘스터치(치킨)':
+            return crawcafeteria.moms('치킨')
+        elif self.cur_text == '맘스터치(스낵)':
+            return crawcafeteria.moms('스낵')
         elif self.cur_text == '오늘의 날씨':
             return weather.main_action()
         elif self.cur_text == '내일의 메뉴 확인':
@@ -120,121 +148,31 @@ class message_make:
                     }
                 )
             elif self.cur_text == '중식' and self.pre_text == '채움관&이룸관' and (now_time < chaeum_lunch_start or now_time > chaeum_lunch_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
-                        }
-                    }
-                )
+                message_val = self.no_star
 
             # 채움관 석식 별점 등록 가능여부 확인
             elif self.cur_text == '석식' and self.pre_text == '채움관&이룸관' and (now_time >=chaeum_dinner_start and now_time <= chaeum_dinner_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '별점을 선택하세요'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["★★★★★", "★★★★☆", "★★★☆☆", "★★☆☆☆", "★☆☆☆☆", "처음으로"]
-                        }
-                    }
-                )
+                message_val = self.yes_star
             elif self.cur_text == '석식' and self.pre_text == '채움관&이룸관' and (now_time < chaeum_dinner_start or now_time > chaeum_dinner_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
-                        }
-                    }
-                )
+                message_val = self.no_star
 
             # 기숙사 조식 별점 등록 가능여부 확인
             elif self.cur_text == '조식' and self.pre_text == '기숙사' and (now_time >=domitory_morning_start and now_time <= domitory_morning_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '별점을 선택하세요'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["★★★★★", "★★★★☆", "★★★☆☆", "★★☆☆☆", "★☆☆☆☆", "처음으로"]
-                        }
-                    }
-                )
+                message_val = self.yes_star
             elif self.cur_text == '조식' and self.pre_text == '기숙사' and (now_time < domitory_morning_start or now_time > domitory_morning_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
-                        }
-                    }
-                )
+                message_val = self.no_star
 
             # 기숙사 중식 별점 등록 가능여부 확인
             elif self.cur_text == '중식' and self.pre_text == '기숙사' and (now_time >=domitory_lunch_start and now_time <= domitory_lunch_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '별점을 선택하세요'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["★★★★★", "★★★★☆", "★★★☆☆", "★★☆☆☆", "★☆☆☆☆", "처음으로"]
-                        }
-                    }
-                )
+                message_val = self.yes_star
             elif self.cur_text == '중식' and self.pre_text == '기숙사' and (now_time < domitory_lunch_start or now_time > domitory_lunch_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
-                        }
-                    }
-                )
+                message_val = self.no_star
 
             #기숙사 석식 별점 등록 가능여부 확인
             elif self.cur_text == '석식' and self.pre_text == '기숙사' and (now_time >=domitory_dinner_start and now_time <= domitory_dinner_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '별점을 선택하세요'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["★★★★★", "★★★★☆", "★★★☆☆", "★★☆☆☆", "★☆☆☆☆", "처음으로"]
-                        }
-                    }
-                )
+                message_val = self.yes_star
             elif self.cur_text == '석식' and self.pre_text == '기숙사' and (now_time < domitory_dinner_start or now_time > domitory_dinner_end):
-                message_val = JsonResponse(
-                    {
-                        'message': {
-                            'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
-                        },
-                        "keyboard": {
-                            "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
-                        }
-                    }
-                )
+                message_val = self.no_star
 
             else:
                 message_val = JsonResponse(
@@ -244,7 +182,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
                         }
                     }
                 )
@@ -270,7 +208,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
                         }
                     }
                 )
@@ -282,11 +220,23 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                            "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
                         }
                     }
                 )
 
+        elif self.cur_text == '박물관':
+            message_val = JsonResponse(
+                {
+                    'message': {
+                        'text': '식당을 선택하세요'
+                    },
+                    "keyboard": {
+                        "type": "buttons",
+                        "buttons": ["양식당", "맘스터치(버거)", "맘스터치(치킨)", "맘스터치(스낵)"]
+                    }
+                }
+            )
 
         elif self.cur_text == '처음으로':
             message_val = JsonResponse(
@@ -296,7 +246,7 @@ class message_make:
                 },
                 "keyboard": {
                     "type": "buttons",
-                    "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                    "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
                 }
             }
         )
@@ -308,7 +258,7 @@ class message_make:
                 },
                 "keyboard": {
                     "type": "buttons",
-                    "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "양식당", "오늘의 날씨", "내일의 메뉴 확인"]
+                    "buttons": ["채움관", "이룸관", "기숙사", "별점 주기", "박물관", "오늘의 날씨", "내일의 메뉴 확인"]
                 }
             }
         )
