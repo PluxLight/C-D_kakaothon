@@ -122,14 +122,12 @@ class message_make:
                 )
             else:
                 button_list = ['처음으로']
-                if breakfast_exist == True:  # 식단이 존재하면 별점 버튼 추가
-                    button_list.insert(0, '조식')
-
+                if dinner_exist == True: # 식단이 존재하면 별점 버튼 추가
+                    button_list.insert(0, '석식')
                 if lunch_exist == True:
                     button_list.insert(0, '중식')
-
-                if dinner_exist == True:
-                    button_list.insert(0, '석식')
+                if breakfast_exist == True:
+                    button_list.insert(0, '조식')
 
                 message_val = JsonResponse(
                     {
@@ -161,14 +159,12 @@ class message_make:
                 )
             else:
                 button_list = ['처음으로']
-                if breakfast_exist == True:  # 식단이 존재하면 별점 버튼 추가
-                    button_list.insert(0, '조식')
-
+                if dinner_exist == True: # 식단이 존재하면 별점 버튼 추가
+                    button_list.insert(0, '석식')
                 if lunch_exist == True:
                     button_list.insert(0, '중식')
-
-                if dinner_exist == True:
-                    button_list.insert(0, '석식')
+                if breakfast_exist == True:
+                    button_list.insert(0, '조식')
 
                 message_val = JsonResponse(
                     {
