@@ -33,40 +33,39 @@ class message_make:
                         }
                     }
                 )
+        self.basic_button = ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
 
     def button_check(self):
         if self.cur_text == '채움관':
             if self.pre_text == '내일의 메뉴 확인':
-                return crawcafeteria.cheaum_tomorrow()
+                return db_control.cheaum_tomorrow()
             else:
-                return crawcafeteria.cheaum()
+                return db_control.cheaum()
         elif self.cur_text == '이룸관':
             if self.pre_text == '내일의 메뉴 확인':
-                return crawcafeteria.erum_tomorrow()
+                return db_control.erum_tomorrow()
             else:
-                return crawcafeteria.cheaum()
-            return crawcafeteria.erum()
+                return db_control.cheaum()
+            return db_control.erum()
         elif self.cur_text == '기숙사':
             if self.pre_text == '내일의 메뉴 확인':
-                return crawcafeteria.domitori_tomorrow()
+                return db_control.domitori_tomorrow()
             else:
-                return crawcafeteria.domitori()
+                return db_control.domitori()
         elif self.cur_text == '양식당':
-            return crawcafeteria.restaurant()
+            return db_control.restaurant()
         elif self.cur_text == '맘스터치(버거)':
-            return crawcafeteria.moms('버거')
+            return db_control.moms('버거')
         elif self.cur_text == '맘스터치(치킨)':
-            return crawcafeteria.moms('치킨')
+            return db_control.moms('치킨')
         elif self.cur_text == '맘스터치(스낵)':
-            return crawcafeteria.moms('스낵')
+            return db_control.moms('스낵')
         elif self.cur_text == '오늘의 날씨':
             return weather.main_action()
         else:
             return '미구현'
 
     def return_message(self):
-
-        input_text = self.button_check()
 
         if self.cur_text == '교내식당':
             message_val = JsonResponse(
@@ -106,29 +105,83 @@ class message_make:
                 }
             )
         elif self.cur_text == '채움관&이룸관':
-            message_val = JsonResponse(
-                {
-                    'message': {
-                        'text': '식단을 선택하세요'
-                    },
-                    "keyboard": {
-                        "type": "buttons",
-                        "buttons": ["중식", "석식", "처음으로"]
+            day_of_week = datetime.datetime.today().weekday()
+            breakfast_exist, lunch_exist, dinner_exist = db_control.meal_exist('채움관', day_of_week)
+
+            if breakfast_exist == False and lunch_exist == False and dinner_exist == False:
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '식단이 존재하지 않습니다\n 처음으로 돌아갑니다'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": self.basic_button
+                        }
                     }
-                }
-            )
+                )
+            else:
+                button_list = ['처음으로']
+                if breakfast_exist == True:  # 식단이 존재하면 별점 버튼 추가
+                    button_list.insert(0, '조식')
+
+                if lunch_exist == True:
+                    button_list.insert(0, '중식')
+
+                if dinner_exist == True:
+                    button_list.insert(0, '석식')
+
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '식단을 선택하세요'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": button_list
+                        }
+                    }
+                )
+
         elif self.cur_text == '기숙사' and self.pre_text == '별점 주기':
-            message_val = JsonResponse(
-                {
-                    'message': {
-                        'text': '식단을 선택하세요'
-                    },
-                    "keyboard": {
-                        "type": "buttons",
-                        "buttons": ["조식", "중식", "석식", "처음으로"]
+            day_of_week = datetime.datetime.today().weekday()
+            breakfast_exist, lunch_exist, dinner_exist = db_control.meal_exist('기숙사', day_of_week)
+
+            if breakfast_exist == False and lunch_exist == False and dinner_exist == False:
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '식단이 존재하지 않습니다\n 처음으로 돌아갑니다'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": self.basic_button
+                        }
                     }
-                }
-            )
+                )
+            else:
+                button_list = ['처음으로']
+                if breakfast_exist == True:  # 식단이 존재하면 별점 버튼 추가
+                    button_list.insert(0, '조식')
+
+                if lunch_exist == True:
+                    button_list.insert(0, '중식')
+
+                if dinner_exist == True:
+                    button_list.insert(0, '석식')
+
+                message_val = JsonResponse(
+                    {
+                        'message': {
+                            'text': '식단을 선택하세요'
+                        },
+                        "keyboard": {
+                            "type": "buttons",
+                            "buttons": button_list
+                        }
+                    }
+                )
+
         elif self.cur_text == '조식' or self.cur_text == '중식' or self.cur_text == '석식':
 
             now_time = datetime.datetime.now()
@@ -186,7 +239,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
@@ -212,7 +265,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
@@ -224,7 +277,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
@@ -246,7 +299,7 @@ class message_make:
             message_val = JsonResponse(
                 {
                     'message': {
-                        'text': '검색할 식당 이름을 입력하세요\n식당리스트를 보려면 \n리스트\n를 입력하세요'
+                        'text': '검색할 식당 이름을 입력하세요\n식당리스트를 보려면 리스트 를 입력하세요\n처음으로 돌아가려면 처음으로 를 입력하세요'
                     },
                     "keyboard": {
                         "type": "text"
@@ -262,7 +315,7 @@ class message_make:
                 },
                 "keyboard": {
                     "type": "buttons",
-                    "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+                    "buttons": self.basic_button
                 }
             }
         )
@@ -276,11 +329,12 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기", "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
             else:
+                input_text = self.button_check()
                 message_val = JsonResponse(
                     {
                         'message': {
@@ -288,7 +342,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기", "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
