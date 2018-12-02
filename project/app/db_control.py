@@ -561,13 +561,13 @@ def domitori(): #기숙사 당일 정보
     breakfast_exist, lunch_exist, dinner_exist = meal_exist('기숙사', day_of_week)
 
     if breakfast_exist == True: #식단이 존재하면 별점 정보 표시
-        data += "조식 %s %d명이 참여\n"%(breakfast_star, breakfast_cnt)
+        data += "\n조식 %s %d명이 참여"%(breakfast_star, breakfast_cnt)
 
     if lunch_exist == True:
-        data += "중식 %s %d명이 참여\n"%(lunch_star, lunch_cnt)
+        data += "\n중식 %s %d명이 참여"%(lunch_star, lunch_cnt)
 
     if dinner_exist == True:
-        data += "석식 %s %d명이 참여"%(dinner_star, dinner_cnt)
+        data += "\n석식 %s %d명이 참여"%(dinner_star, dinner_cnt)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---" % random_ad()
 
@@ -593,13 +593,13 @@ def cheaum():#채움관 당일 정보
     breakfast_exist, lunch_exist, dinner_exist = meal_exist('채움관', day_of_week)
 
     if breakfast_exist == True:  # 식단이 존재하면 별점 정보 표시
-        data += "조식 %s %d명이 참여\n" % (breakfast_star, breakfast_cnt)
+        data += "\n조식 %s %d명이 참여" % (breakfast_star, breakfast_cnt)
 
     if lunch_exist == True:
-        data += "중식 %s %d명이 참여\n" % (lunch_star, lunch_cnt)
+        data += "\n중식 %s %d명이 참여" % (lunch_star, lunch_cnt)
 
     if dinner_exist == True:
-        data += "석식 %s %d명이 참여\n" % (dinner_star, dinner_cnt)
+        data += "\n석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---"%random_ad()
 
@@ -625,13 +625,13 @@ def erum():#이움관 당일 정보
     breakfast_exist, lunch_exist, dinner_exist = meal_exist('이룸관', day_of_week)
 
     if breakfast_exist == True:  # 식단이 존재하면 별점 정보 표시
-        data += "조식 %s %d명이 참여\n" % (breakfast_star, breakfast_cnt)
+        data += "\n조식 %s %d명이 참여" % (breakfast_star, breakfast_cnt)
 
     if lunch_exist == True:
-        data += "중식 %s %d명이 참여\n" % (lunch_star, lunch_cnt)
+        data += "\n중식 %s %d명이 참여" % (lunch_star, lunch_cnt)
 
     if dinner_exist == True:
-        data += "석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
+        data += "\n석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---" % random_ad()
 
