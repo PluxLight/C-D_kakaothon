@@ -5,6 +5,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def school_menu_delete():
+    conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
+    cur = conn.cursor()
+    sql_str = "delete from school_menu;"
+    cur.execute(sql_str)
+    conn.commit()
+
 def db_upload(place, upload_data, dow, morning, lunch, dinner):
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     cur = conn.cursor()
@@ -210,6 +217,7 @@ def erum_create(): #이번주 채움관 식단 DB생성(생성 요일 무관하�
             db_upload('이룸관', menu_text, day_db_sql[i], em, el, ed)
 
 if __name__ == "__main__":
+    school_menu_delete()
     domitori_create()
     nw_domitori_create()
     cheaum_create()
