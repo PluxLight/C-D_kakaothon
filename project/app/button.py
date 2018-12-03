@@ -45,7 +45,7 @@ class message_make:
             if self.pre_text == '내일의 메뉴 확인':
                 return db_control.erum_tomorrow()
             else:
-                return db_control.cheaum()
+                return db_control.erum()
             return db_control.erum()
         elif self.cur_text == '기숙사':
             if self.pre_text == '내일의 메뉴 확인':
