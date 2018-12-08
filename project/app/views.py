@@ -12,7 +12,7 @@ def keyboard(request):
     return  JsonResponse(
         {
             "type": "buttons",
-            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨", "자취/하숙 정보"]
         }
     )
 

@@ -1,6 +1,7 @@
 from app import crawcafeteria
 from app import weather
 from app import db_control
+from app import one_room
 from django.http import JsonResponse
 import datetime
 
@@ -11,6 +12,7 @@ class message_make:
         self.pre_text = pre_text
         self.pre_pre_text = pre_pre_text
         self.user_key = user_key
+        self.basic_button = ["교내식당", "학교 주변식당", "별점 주기", "오늘의 날씨", "자취/하숙 정보"]
         self.no_star = JsonResponse(
                     {
                         'message': {
@@ -18,7 +20,7 @@ class message_make:
                         },
                         "keyboard": {
                             "type": "buttons",
-                            "buttons": ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+                            "buttons": self.basic_button
                         }
                     }
                 )
@@ -33,7 +35,7 @@ class message_make:
                         }
                     }
                 )
-        self.basic_button = ["교내식당", "학교 주변식당", "별점 주기",  "오늘의 날씨"]
+
 
     def button_check(self):
         if self.cur_text == '채움관':
@@ -62,6 +64,8 @@ class message_make:
             return db_control.moms('스낵')
         elif self.cur_text == '오늘의 날씨':
             return weather.main_action()
+        elif self.cur_text == '자취/하숙 정보':
+            return one_room.room_data()
         else:
             return '미구현'
 

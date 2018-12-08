@@ -85,11 +85,43 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
 
         breakfast, lunch, dinner = menu_sum(breakfast, lunch, dinner)
 
-        menu_text = nowDate + ' ' + day_db_h[i] + '\n<----------조식---------->\n' + breakfast + \
-                    '\n<----------중식---------->\n식사시간 11:50~13:30\n' + lunch + \
-                    '\n<----------석식---------->\n식사시간 16:50~18:30\n' + dinner
+        menu_text = nowDate + ' ' + day_db_h[i] + '\n<----------조식---------->\n식사시간 07:30~09:00\n' + breakfast + \
+                    '\n<----------중식---------->\n식사시간 12:00~13:30\n' + lunch + \
+                    '\n<----------석식---------->\n식사시간 18:00~19:30\n' + dinner
 
         db_upload('기숙사', menu_text, day_db_h[i], em, el, ed)
+
+    tomorrow = now + dt.timedelta(days=7)  # 오늘 기준으로 +7일
+    day_of_week = dt.datetime.today().weekday()  # 오늘 날짜의 요일을 숫자로 변환 (0:월, 1:화, 2:수, 3:목, 4:금, 5:토, 6:일)
+    tomorrow = tomorrow - dt.timedelta(days=day_of_week)  # 오늘 기준으로 다음주에서 오늘의 요일 값만큼 빼서 다음주 월요일이 도출
+    toDate = str(tomorrow.strftime('%Y-%m-%d'))  # 도출된 값을 지정된 형식으로 문자열 포맷
+
+    nowYearDate = str(tomorrow.strftime('%Y'))
+    nowMonthDate = str(tomorrow.strftime('%m'))
+    toDayDate = str(tomorrow.strftime('%d'))
+
+    url = 'http://dorm.andong.ac.kr/2014/food_menu/food_menu.htm?year=' + nowYearDate + '&month=' + nowMonthDate + '&day=' + toDayDate
+
+    cafe_table = pd.read_html(url)[0]
+    cafe_table = cafe_table.fillna('없음')
+
+    breakfast = cafe_table[1][3]
+    lunch = cafe_table[2][3]
+    dinner = cafe_table[3][3]
+
+    breakfast = breakfast.split(' ')
+    lunch = lunch.split(' ')
+    dinner = dinner.split(' ')
+
+    em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner))
+
+    breakfast, lunch, dinner = menu_sum(breakfast, lunch, dinner)
+
+    menu_text = toDate + ' ' + '월요일' + '\n<----------조식---------->\n' + breakfast + \
+                '\n<----------중식---------->\n식사시간 11:50~13:30\n' + lunch + \
+                '\n<----------석식---------->\n식사시간 16:50~18:30\n' + dinner
+
+    db_upload('기숙사', menu_text, '월요일(다음주)', em, el, ed)
 
 def nw_domitori_create(): #다음주 월요일 기숙사 식단 DB생성
 
