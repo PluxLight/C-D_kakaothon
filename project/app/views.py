@@ -31,8 +31,10 @@ def message(request):
 
     db_control.key_insert(user_name, content_name)
 
-    #print(pre_input_text)
-    #print(pre_pre_input_text)
+    # print("전"+pre_input_text)
+    # print("전 전"+pre_pre_input_text)
+    # print("현재" + content_name)
+    # print(user_name) #오류 발생시 확인용 print문
 
     #input_text = button.button_check(content_name)
 
