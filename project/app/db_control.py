@@ -494,7 +494,7 @@ def erum_create(): #이번주 채움관 식단 DB생성(생성 요일 무관하�
 
             db_upload('이룸관', menu_text, day_db_sql[i], em, el, ed)
 
-def menu_print(place, day):
+def menu_print(place, day, star_plus=0):
     day_db_h = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일', '월요일(다음주)']  # DB 텍스트에 넣을 요일 문자 리스트
 
     try:
@@ -504,16 +504,27 @@ def menu_print(place, day):
         return 0
 
     cur = conn.cursor()
-    sql_str = "select menu from school_menu where place='%s' and day='%s';"%(place, day_db_h[day])
+    sql_str = "select menu, breakfast, lunch, dinner from school_menu where place='%s' and day='%s';"%(place, day_db_h[day])
 
     cur.execute(sql_str)
 
     result = cur.fetchall()
 
-    cur.close()
-    conn.close()
+    data = result[0][0]
 
-    return result[0][0]
+    if star_plus == 1:
+        breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt = star_cnt(place)
+
+        if result[0][1] == True:  # 식단이 존재하면 별점 정보 표시
+            data += "\n조식 %s %d명이 참여" % (breakfast_star, breakfast_cnt)
+
+        if result[0][2] == True:
+            data += "\n중식 %s %d명이 참여" % (lunch_star, lunch_cnt)
+
+        if result[0][3] == True:
+            data += "\n석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
+
+    return data
 
 def restaurant_list(message):
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
@@ -554,20 +565,7 @@ def restaurant_list(message):
 def domitori(): #기숙사 당일 정보
     day_of_week = dt.datetime.today().weekday()
 
-    data = menu_print('기숙사', day_of_week)
-
-    breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt = star_cnt('기숙사')
-
-    breakfast_exist, lunch_exist, dinner_exist = meal_exist('기숙사', day_of_week)
-
-    if breakfast_exist == True: #식단이 존재하면 별점 정보 표시
-        data += "\n조식 %s %d명이 참여"%(breakfast_star, breakfast_cnt)
-
-    if lunch_exist == True:
-        data += "\n중식 %s %d명이 참여"%(lunch_star, lunch_cnt)
-
-    if dinner_exist == True:
-        data += "\n석식 %s %d명이 참여"%(dinner_star, dinner_cnt)
+    data = menu_print('기숙사', day_of_week, 1)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---" % random_ad()
 
@@ -586,20 +584,7 @@ def domitori_tomorrow(): #기숙사 익일 정보
 def cheaum():#채움관 당일 정보
     day_of_week = dt.datetime.today().weekday()
 
-    data = menu_print('채움관', day_of_week)
-
-    breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt = star_cnt('채움관')
-
-    breakfast_exist, lunch_exist, dinner_exist = meal_exist('채움관', day_of_week)
-
-    if breakfast_exist == True:  # 식단이 존재하면 별점 정보 표시
-        data += "\n조식 %s %d명이 참여" % (breakfast_star, breakfast_cnt)
-
-    if lunch_exist == True:
-        data += "\n중식 %s %d명이 참여" % (lunch_star, lunch_cnt)
-
-    if dinner_exist == True:
-        data += "\n석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
+    data = menu_print('채움관', day_of_week, 1)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---"%random_ad()
 
@@ -618,20 +603,7 @@ def cheaum_tomorrow(): #채움관 익일 정보
 def erum():#이움관 당일 정보
     day_of_week = dt.datetime.today().weekday()
 
-    data = menu_print('이룸관', day_of_week)
-
-    breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt = star_cnt('이룸관')
-
-    breakfast_exist, lunch_exist, dinner_exist = meal_exist('이룸관', day_of_week)
-
-    if breakfast_exist == True:  # 식단이 존재하면 별점 정보 표시
-        data += "\n조식 %s %d명이 참여" % (breakfast_star, breakfast_cnt)
-
-    if lunch_exist == True:
-        data += "\n중식 %s %d명이 참여" % (lunch_star, lunch_cnt)
-
-    if dinner_exist == True:
-        data += "\n석식 %s %d명이 참여" % (dinner_star, dinner_cnt)
+    data = menu_print('이룸관', day_of_week, 1)
 
     data += "\n\n아니면 여기는 어떨까요?\n---%s---" % random_ad()
 
