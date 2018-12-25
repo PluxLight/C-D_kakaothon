@@ -13,7 +13,7 @@ class message_make:
         self.pre_pre_text = pre_pre_text
         self.user_key = user_key
         self.basic_button = ["교내식당", "학교 주변식당", "별점 주기", "오늘의 날씨", "자취/하숙 정보"]
-        self.no_star = JsonResponse(
+        self.no_star = JsonResponse( #별점등록기간이 아닌경우
                     {
                         'message': {
                             'text': '현재는 별점 등록기간이 아닙니다\n처음으로 돌아갑니다'
@@ -24,7 +24,7 @@ class message_make:
                         }
                     }
                 )
-        self.yes_star = JsonResponse(
+        self.yes_star = JsonResponse( #별정등록기간인 경우
                     {
                         'message': {
                             'text': '별점을 선택하세요'
