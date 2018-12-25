@@ -37,13 +37,13 @@ def pre_value(u_key): #사용자가 바로 이전에 응답한 값을 반환
         return 0
 
     cur = conn.cursor()
-    sql_str = "select request from user_key where key='" + u_key + "';"
+    sql_str = "select request from user_key where key='" + u_key + "' and depth=1;"
     try: #기존에 값이 있던 경우
         cur.execute(sql_str)
 
         result = cur.fetchall()
 
-        return result[1][0]
+        return result[0][0]
 
     except: #첫 사용시 값이 없는 경우
         return '0'
@@ -56,7 +56,7 @@ def pre_pre_value(u_key): #사용자가 두 단계 이전에 응답한 값을 �
         return 0
 
     cur = conn.cursor()
-    sql_str = "select request from user_key where key='" + u_key + "';"
+    sql_str = "select request from user_key where key='" + u_key + "' and depth=2;"
     try: #기존에 값이 있던 경우
         cur.execute(sql_str)
 
