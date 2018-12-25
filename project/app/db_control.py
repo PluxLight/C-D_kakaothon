@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def key_insert(u_key, reque): # 기존에 있던것은 depth=2로 업데이트 -> 유저가 응답한 반응은 새 튜플에 넣고
+def key_insert(u_key, reque): # 기존에 있던것은 depth=2로 업데이트 -> 유저가 응답한 반응은 새로 넣는다
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     except:
@@ -19,9 +19,7 @@ def key_insert(u_key, reque): # 기존에 있던것은 depth=2로 업데이트 -
     update_str = "update user_key set depth='2' where key='" + u_key + "';"
     try: #기존에 값이 있던 경우
         cur.execute(del_str)
-        conn.commit()
         cur.execute(update_str)
-        conn.commit()
         cur.execute(insert_str)
         conn.commit()
 
@@ -29,12 +27,9 @@ def key_insert(u_key, reque): # 기존에 있던것은 depth=2로 업데이트 -
         cur.execute(insert_str)
         conn.commit()
 
-    cur.close()
-    conn.close()
-
     return 0
 
-def pre_value(u_key):
+def pre_value(u_key): #사용자가 바로 이전에 응답한 값을 반환
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     except:
@@ -42,18 +37,18 @@ def pre_value(u_key):
         return 0
 
     cur = conn.cursor()
-    sql_str = "select request from user_key where key='" + u_key + "' and depth=1;"
+    sql_str = "select request from user_key where key='" + u_key + "';"
     try: #기존에 값이 있던 경우
         cur.execute(sql_str)
 
         result = cur.fetchall()
 
-        return result[0][0]
+        return result[1][0]
 
     except: #첫 사용시 값이 없는 경우
         return '0'
 
-def pre_pre_value(u_key):
+def pre_pre_value(u_key): #사용자가 두 단계 이전에 응답한 값을 반환
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     except:
@@ -61,7 +56,7 @@ def pre_pre_value(u_key):
         return 0
 
     cur = conn.cursor()
-    sql_str = "select request from user_key where key='" + u_key + "' and depth=2;"
+    sql_str = "select request from user_key where key='" + u_key + "';"
     try: #기존에 값이 있던 경우
         cur.execute(sql_str)
 
@@ -79,8 +74,6 @@ def star_point(star, pre_text, pre_pre_text): #사용자가 보낸 별점을 db�
         print("Star_point Error")
         return 0
 
-    #print(pre_text, pre_pre_text)
-
     if pre_text == "조식" and pre_pre_text == "채움관&이룸관":
         position = 'cheaum_morning'
     elif pre_text == '중식' and pre_pre_text == '채움관&이룸관':
@@ -96,22 +89,18 @@ def star_point(star, pre_text, pre_pre_text): #사용자가 보낸 별점을 db�
     else:
         return 0
 
-
     cur = conn.cursor()
     update_str = "update star_point set point=point + " + str(star) + ", count=count + 1 where position='" + position + "';"
 
     cur.execute(update_str)
     conn.commit()
 
-    cur.close()
-    conn.close()
-
     return 0
 
-def trans_star(sum, cnt):
-    if cnt == 0:
+def trans_star(sum, cnt): #정수형태의 별점을 특수문자 형태로 변환
+    if cnt == 0: #값이 0인경우 값을 나누지않고 넘어간다
         pass
-    else:
+    else: #0이 아니면 별점을 사용자 수만큼 나누어 평균값을 구한다
         sum = sum / cnt
 
     if sum == 5 or sum > 4.0:
@@ -166,9 +155,9 @@ def star_cnt(position): #사용자가 식단정보 요청시 별점정보도 같
     lunch_star = trans_star(lunch_star, breakfast_cnt)
     dinner_star = trans_star(dinner_star, breakfast_cnt)
 
-    return breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt
+    return breakfast_star, breakfast_cnt, lunch_star, lunch_cnt, dinner_star, dinner_cnt #아침 별점, 아침 참여수, 점심 별점, 점심 참여수, 저녁 별점, 저녁 참여수
 
-def meal_exist(position, day):
+def meal_exist(position, day): #해당 식당의 식사가 존재하는지 여부 확인
 
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
@@ -202,17 +191,12 @@ def star_reset(): #윈도우 스케줄러에 등록해서 매 정각마다 별�
     update_str = "update star_point set point=0, count=0;"
 
     cur.execute(update_str)
-    conn.commit()
-
-    update_str = "update star_overlap set overlap_check=0;"
+    update_str = "delete from star_overlap;"
 
     cur.execute(update_str)
     conn.commit()
 
-    cur.close()
-    conn.close()
-
-def overlap_check(u_key, pre_text,pre_pre_text):
+def overlap_check(u_key, pre_text,pre_pre_text): #별점주기에 참여한 적이 있는지 확인하는 기능
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     except:
@@ -239,10 +223,9 @@ def overlap_check(u_key, pre_text,pre_pre_text):
 
     cur.execute(sql_str)
     check_int = cur.fetchall()
-    try:
+    try: #별점을 해당 내용에 투표한 적이 있다면
         check_int = int(check_int[0][0])
-        print(check_int)
-    except:
+    except: #별점을 해당 내용에 투표한 적이 없어서 데이터가 없는 경우
         check_int = 0
 
 
@@ -252,14 +235,11 @@ def overlap_check(u_key, pre_text,pre_pre_text):
         cur.execute(update_str)
         conn.commit()
 
-        cur.close()
-        conn.close()
-
         return 0
     else: #투표 당일날 해당 항목에 투표한 경우
         return 1
 
-def moms_db(moms_type):
+def moms_db(moms_type): #박물관-맘스터치의 정보를 반환
     try:
         conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     except:
@@ -267,32 +247,30 @@ def moms_db(moms_type):
         return 0
 
     cur = conn.cursor()
-
     str_sql = "select * from moms where note='%s';"%moms_type
-
     cur.execute(str_sql)
 
     results = cur.fetchall()
 
-    if moms_type == '버거':
+    if moms_type == '버거':  #버거 메뉴 정보 호출시 단품/세트 메뉴 구분용 형식
         moms_data = '메뉴 / 단품가격 / 세트가격\n'
         for result in results:
             moms_data += str(result[0]) + ' / ' + str(result[1]) + ' / ' + str(result[2]) + '\n'
-    else:
+    else: #버거 이외 형식
         moms_data = '메뉴 / 가격\n'
         for result in results:
             moms_data += str(result[0]) + ' ' + str(result[1]) + '\n'
 
     return moms_data
 
-def school_menu_delete():
+def school_menu_delete(): #DB에 등록된 학생회관 식당, 기숙사 식당 정보를 삭제
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     cur = conn.cursor()
     sql_str = "delete from school_menu;"
     cur.execute(sql_str)
     conn.commit()
 
-def db_upload(place, upload_data, dow, morning, lunch, dinner):
+def db_upload(place, upload_data, dow, morning, lunch, dinner): #DB에 학생회관 식당, 기숙사 식당 정보를 등록
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     cur = conn.cursor()
     sql_str = "insert into school_menu values ('%s', '%s', '%s', %r, %r, %r);" % (
@@ -300,7 +278,7 @@ def db_upload(place, upload_data, dow, morning, lunch, dinner):
     cur.execute(sql_str)
     conn.commit()
 
-def exist_check(morning, lunch, dinner): #조식, 중식, 석식 식단이 있는지 판단한다 / db에 업로드 할 때 사용
+def exist_check(morning, lunch, dinner): #조식, 중식, 석식 식단이 있는지 판단한다 / db에 업로드 할 때 사용 / 메뉴 길이로 식단 존재여부 판단
     if morning > 3:
         morning = True
     else:
@@ -318,7 +296,7 @@ def exist_check(morning, lunch, dinner): #조식, 중식, 석식 식단이 있�
 
     return morning, lunch, dinner
 
-def menu_sum(breakfast, lunch, dinner):
+def menu_sum(breakfast, lunch, dinner): #DB에 식단정보 등록할때 문자열을 합치는 기능
     #print(breakfast, lunch, dinner)
 
     sum = ''
@@ -350,7 +328,7 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
     cafe_table = pd.read_html(url)[0]
     cafe_table = cafe_table.fillna('없음')
 
-    for i in range(0, 7):
+    for i in range(0, 7): #일주일치 데이터 업로드
         exact_day = standard_day + dt.timedelta(days=i)
         nowDate = str(exact_day.strftime('%Y-%m-%d'))
 
@@ -362,7 +340,7 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
         lunch = lunch.split(' ')
         dinner = dinner.split(' ')
 
-        em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner))
+        em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner)) #리스트의 길이로 식단 존재 여부 판단 후 변수에 저장
 
         breakfast, lunch, dinner = menu_sum(breakfast, lunch, dinner)
 
@@ -371,7 +349,8 @@ def domitori_create(): #이번주 기숙사 식단 DB생성
                     '\n<----------석식---------->\n식사시간 18:00~19:30\n' + dinner
 
         db_upload('기숙사', menu_text, day_db_h[i], em, el, ed)
-
+    
+    #다음주 월요일 정보 생성
     tomorrow = now + dt.timedelta(days=7)  # 오늘 기준으로 +7일
     day_of_week = dt.datetime.today().weekday()  # 오늘 날짜의 요일을 숫자로 변환 (0:월, 1:화, 2:수, 3:목, 4:금, 5:토, 6:일)
     tomorrow = tomorrow - dt.timedelta(days=day_of_week)  # 오늘 기준으로 다음주에서 오늘의 요일 값만큼 빼서 다음주 월요일이 도출
@@ -439,7 +418,7 @@ def cheaum_create(): #이번주 채움관 식단 DB생성(생성 요일 무관�
             lunch = str(check_chaeum[1]).replace("<dd>", "").replace("</dd>", "").replace("amp;", "").split("<br/>")
             dinner = str(check_chaeum[2]).replace("<dd>", "").replace("</dd>", "").replace("amp;", "").split("<br/>")
 
-            em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner))
+            em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner)) #리스트의 길이로 식단 존재 여부 판단 후 변수에 저장
 
             breakfast, lunch, dinner = menu_sum(breakfast, lunch, dinner)
 
@@ -484,7 +463,7 @@ def erum_create(): #이번주 채움관 식단 DB생성(생성 요일 무관하�
             lunch = str(check_chaeum[1]).replace("<dd>", "").replace("</dd>", "").replace("amp;", "").split("<br/>")
             dinner = str(check_chaeum[2]).replace("<dd>", "").replace("</dd>", "").replace("amp;", "").split("<br/>")
 
-            em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner))
+            em, el, ed = exist_check(len(breakfast), len(lunch), len(dinner)) #리스트의 길이로 식단 존재 여부 판단 후 변수에 저장
 
             breakfast, lunch, dinner = menu_sum(breakfast, lunch, dinner)
 
@@ -494,7 +473,7 @@ def erum_create(): #이번주 채움관 식단 DB생성(생성 요일 무관하�
 
             db_upload('이룸관', menu_text, day_db_sql[i], em, el, ed)
 
-def menu_print(place, day, star_plus=0):
+def menu_print(place, day, star_plus=0): #사용자가 요청시 해당 식당의 식단정보를 반환
     day_db_h = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일', '월요일(다음주)']  # DB 텍스트에 넣을 요일 문자 리스트
 
     try:
@@ -505,11 +484,8 @@ def menu_print(place, day, star_plus=0):
 
     cur = conn.cursor()
     sql_str = "select menu, breakfast, lunch, dinner from school_menu where place='%s' and day='%s';"%(place, day_db_h[day])
-
     cur.execute(sql_str)
-
     result = cur.fetchall()
-
     data = result[0][0]
 
     if star_plus == 1:
@@ -526,10 +502,10 @@ def menu_print(place, day, star_plus=0):
 
     return data
 
-def restaurant_list(message):
+def restaurant_list(message): #인근 식당의 정보를 반환
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
     cur = conn.cursor()
-    if message == '리스트':
+    if message == '리스트': #사용자가 리스트 입력시 인근 식당의 리스트를 반환
         sql_str = "select distinct name, tel, delivery from restaurant order by name asc;"
         cur.execute(sql_str)
 
@@ -544,15 +520,15 @@ def restaurant_list(message):
     elif message == '처음으로':
         return '처음으로 돌아갑니다'
 
-    else:
+    else: #리스트 이외의 값을 입력했을때
         sql_str = "select menu, price, tel, delivery from restaurant where name='%s';"%message
         cur.execute(sql_str)
 
         results = cur.fetchall()
 
-        if len(results) < 2:
+        if len(results) < 2: #입력을 잘못했거나 없는 자료 요청시
             return '등록된 정보가 없거나 잘못된 값을 입력했습니다.\n식당 이름은 \n리스트\n를 입력하여 참고하세요'
-        else:
+        else: #사용자가 요청한 정보가 존재할 시
             tel = results[0][2]
             delivery = results[0][3]
             list_data = '%s 정보\n전화번호 : %s\n배달여부 : %s\n\n'%(message, tel, delivery)
@@ -636,7 +612,7 @@ def moms(moms_type): #맘스터치 정보
 
     return moms_data
 
-def random_ad():
+def random_ad(): #식단정보 하단에 임의의 인근 식당 상호를 반환
     rd_num = random.randint(0, 42)
 
     conn = psycopg2.connect("dbname=k_userkey user=postgres host=localhost password=474849")
@@ -649,13 +625,13 @@ def random_ad():
 
     return results
 
-if __name__ == "__main__":
+if __name__ == "__main__": #윈도우 스케줄러에 의해 실행되는 경우
     day_of_week = dt.datetime.today().weekday()
-    if day_of_week == 0:
+    if day_of_week == 0: #실행 당일이 월요일인 경우 (학생회관, 기숙사 식당 정보 업로드)
         school_menu_delete()
         domitori_create()
         cheaum_create()
         erum_create()
-    else:
+    else: #아닌경우 실행하지 않음
         pass
-    star_reset()
+    star_reset() #별점관련 정보 초기화
