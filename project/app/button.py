@@ -1,7 +1,9 @@
-from app import crawcafeteria
 from app import weather
-from app import db_control
+from app import menu_data
 from app import one_room
+from app import response_manage
+from app import star_manage
+from app import db_control
 from django.http import JsonResponse
 import datetime
 
@@ -35,33 +37,37 @@ class message_make:
                         }
                     }
                 )
+        self.rm = response_manage.key_manage()
+        self.md = menu_data.menu()
+        self.sp = star_manage.star_control('0')
+        self.dc = db_control.db_manage()
 
 
     def button_check(self):
         if self.cur_text == '채움관':
             if self.pre_text == '내일의 메뉴 확인':
-                return db_control.cheaum_tomorrow()
+                return self.md.cheaum_tomorrow()
             else:
-                return db_control.cheaum()
+                return self.md.cheaum()
         elif self.cur_text == '이룸관':
             if self.pre_text == '내일의 메뉴 확인':
-                return db_control.erum_tomorrow()
+                return self.md.erum_tomorrow()
             else:
-                return db_control.erum()
-            return db_control.erum()
+                return self.md.erum()
+            return self.md.erum()
         elif self.cur_text == '기숙사':
             if self.pre_text == '내일의 메뉴 확인':
-                return db_control.domitori_tomorrow()
+                return self.md.domitori_tomorrow()
             else:
-                return db_control.domitori()
+                return self.md.domitori()
         elif self.cur_text == '양식당':
-            return db_control.restaurant()
+            return self.md.restaurant()
         elif self.cur_text == '맘스터치(버거)':
-            return db_control.moms('버거')
+            return self.md.moms('버거')
         elif self.cur_text == '맘스터치(치킨)':
-            return db_control.moms('치킨')
+            return self.md.moms('치킨')
         elif self.cur_text == '맘스터치(스낵)':
-            return db_control.moms('스낵')
+            return self.md.moms('스낵')
         elif self.cur_text == '오늘의 날씨':
             return weather.main_action()
         elif self.cur_text == '자취/하숙 정보':
@@ -110,7 +116,7 @@ class message_make:
             )
         elif self.cur_text == '채움관&이룸관':
             day_of_week = datetime.datetime.today().weekday()
-            breakfast_exist, lunch_exist, dinner_exist = db_control.meal_exist('채움관', day_of_week)
+            breakfast_exist, lunch_exist, dinner_exist = self.dc.meal_exist('채움관', day_of_week)
 
             if breakfast_exist == False and lunch_exist == False and dinner_exist == False:
                 message_val = JsonResponse(
@@ -130,8 +136,6 @@ class message_make:
                     button_list.insert(0, '석식')
                 if lunch_exist == True:
                     button_list.insert(0, '중식')
-                if breakfast_exist == True:
-                    button_list.insert(0, '조식')
 
                 message_val = JsonResponse(
                     {
@@ -147,7 +151,7 @@ class message_make:
 
         elif self.cur_text == '기숙사' and self.pre_text == '별점 주기':
             day_of_week = datetime.datetime.today().weekday()
-            breakfast_exist, lunch_exist, dinner_exist = db_control.meal_exist('기숙사', day_of_week)
+            breakfast_exist, lunch_exist, dinner_exist = self.dc.meal_exist('기숙사', day_of_week)
 
             if breakfast_exist == False and lunch_exist == False and dinner_exist == False:
                 message_val = JsonResponse(
@@ -246,7 +250,7 @@ class message_make:
 
         elif self.cur_text == '★★★★★' or self.cur_text == "★★★★☆" or self.cur_text == '★★★☆☆' or \
                 self.cur_text == '★★☆☆☆' or self.cur_text == '★☆☆☆☆':
-            if db_control.overlap_check(self.user_key, self.pre_text, self.pre_pre_text) == 0: #해당 항목에 투표를 한번도 안했을경우
+            if self.sp.overlap_check(self.user_key, self.pre_text, self.pre_pre_text) == 0: #해당 항목에 투표를 한번도 안했을경우
                 if self.cur_text == '★★★★★':
                     star = 5
                 elif self.cur_text == '★★★★☆':
@@ -257,7 +261,7 @@ class message_make:
                     star = 2
                 elif self.cur_text == '★☆☆☆☆':
                     star = 1
-                db_control.star_point(star, self.pre_text, self.pre_pre_text)
+                self.sp.star_point(star, self.pre_text, self.pre_pre_text)
                 message_val = JsonResponse(
                     {
                         'message': {
@@ -321,7 +325,7 @@ class message_make:
         )
         else:
             if self.pre_text == '학교 주변식당':
-                input_text = db_control.restaurant_list(self.cur_text)
+                input_text = self.md.restaurant_list(self.cur_text)
                 message_val = JsonResponse(
                     {
                         'message': {

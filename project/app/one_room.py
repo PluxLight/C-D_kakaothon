@@ -47,6 +47,6 @@ def room_data():
 
     room_str = '자취/하숙 정보는 \n안동대학교 홈페이지에 작성된\n게시글을 중개하고 있습니다\n\n\n게시글 / 작성일\n'
     for i in range(len(room_list)):
-        room_str += '%s / %s\n%s\n' % (room_list[i], room_date_list[i],room_url_list[i])
+        room_str += '%s / %s\n%s\n\n' % (room_list[i], room_date_list[i],room_url_list[i])
 
     return room_str

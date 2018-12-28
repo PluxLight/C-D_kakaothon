@@ -3,8 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 import json
 from app import button
-from app import crawcafeteria
-from app import db_control
+from app import response_manage
 
 
 def keyboard(request):
@@ -22,25 +21,17 @@ def message(request):
     json_str = (request.body).decode('utf-8')
     received_json = json.loads(json_str)
     content_name = received_json['content']
-    #content_name_jeon = received_json['content'][1]
     user_name = received_json['user_key']
 
-    pre_input_text = db_control.pre_value(user_name)
+    r_m = response_manage.key_manage()
 
-    pre_pre_input_text = db_control.pre_pre_value(user_name)
+    pre_input_text = r_m.pre_value(user_name) #사용자가 한단계전에 입력한 값을 변수에 저장
+    pre_pre_input_text = r_m.pre_pre_value(user_name) #사용자가 두단계전에 입력한 값을 변수에 저장
+    r_m.key_insert(user_name, content_name) #사용자가 현재 입력한 값을 DB에 저장
 
-    db_control.key_insert(user_name, content_name)
+    send_message = button.message_make(content_name, pre_input_text, pre_pre_input_text, user_name) #사용자에게 입력한 값을 판별하여 보낼 메세지를 준비
 
-    # print("전"+pre_input_text)
-    # print("전 전"+pre_pre_input_text)
-    # print("현재" + content_name)
-    # print(user_name) #오류 발생시 확인용 print문
-
-    #input_text = button.button_check(content_name)
-
-    throw_message = button.message_make(content_name, pre_input_text, pre_pre_input_text, user_name)
-
-    return throw_message.return_message()
+    return send_message.return_message()
 
 
 #사진 전송을 로컬의 이미지를 업로드 하는 기능은 제공하지 않고 있음
