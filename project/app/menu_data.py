@@ -158,8 +158,7 @@ class menu:
         return data
 
     def restaurant(self):  # 양식당 정보
-        ad_thread = threading.Thread(target=self.random_ad)  # 임의의 가게정보를 호출
-        ad_thread.start()
+        self.random_ad()
 
         res_list = ['등심돈가스: 3800원', '치즈돈가스: 4000원', '치킨까스: 3800원', '불닭덮밥: 3800원', '스팸덮밥: 3800원', '참치마요: 3500원',
                     '김밥: 1500원', '참치김밥: 2500원', \
