@@ -4,6 +4,7 @@ from app import one_room
 from app import response_manage
 from app import star_manage
 from app import db_control
+from app import weathercrawl
 from django.http import JsonResponse
 import datetime
 
@@ -69,7 +70,7 @@ class message_make:
         elif self.cur_text == '맘스터치(스낵)':
             return self.md.moms('스낵')
         elif self.cur_text == '오늘의 날씨':
-            return weather.main_action()
+            return weathercrawl.main()
         elif self.cur_text == '자취/하숙 정보':
             return one_room.room_data()
         else:
